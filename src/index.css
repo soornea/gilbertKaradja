@@ -1,5 +1,4 @@
 body {
-  background-color: #ddf;
   margin: 0;
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen",
     "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue",
@@ -21,15 +20,6 @@ code {
 
 .span {
 	float: left;
-}
-
-/* 
-Make styles more specific, especially when they will make a very obvious 
-outcome in the layout
- */
-img {
-	border-right: 60px solid black;
-	border-left: 60px solid black;
 }
 
 /* 
