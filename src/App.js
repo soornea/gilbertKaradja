@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
 
 import MovieItem from './MovieItem';
@@ -25,6 +25,14 @@ const FormContainer = styled.form`
   display: flex;
   flex-direction: column;
   margin-bottom: 50px;
+
+  input[type=button] {
+    background-color: black;
+    color: white;
+    height: 40px;
+    border-radius: 3px;
+    cursor: pointer;
+  }
 `;
 
 const FormItemContainer = styled.div`
@@ -38,8 +46,15 @@ const FormItemContainer = styled.div`
 
   input {
     height: 35px;
+    padding: 0px 10px;
   }
-`
+`;
+
+const FormErrorMessage = styled.span`
+  font-size: 14px;
+  color: red;
+  margin-top: 5px;
+`;
 
 
 /**
@@ -67,6 +82,12 @@ export function getWatchedMovies() {
 
 
 function getCachedMovies() {
+  const movies = localStorage.getItem(MOVIES_CACHE_KEY);
+
+  if (movies) {
+    return JSON.parse(movies);
+  }
+
   return [
     {
       id: '1',
@@ -90,6 +111,12 @@ function getCachedMovies() {
 }
 
 function getCachedWatchedMoviesData() {
+  const watchedMoviesData = localStorage.getItem(WATCHED_MOVIES_CACHE_KEY);
+
+  if (watchedMoviesData) {
+    return JSON.parse(watchedMoviesData);
+  }
+
   return {};
 }
 
@@ -107,7 +134,12 @@ function App(props) {
   const [newMovieImageUrl, setNewMovieImageUrl] = useState('');
   const [newMovieComment, setNewMovieComment] = useState('');
 
+  const [showFormErrors, setShowFormErrors] = useState(false);
+
   const addNewMovieHandler = () => {
+    setShowFormErrors(true);
+
+    // Make title and image url required
     if (!newMovieTitle || !newMovieImageUrl) return;
 
     const movieId = generateMovieId();
@@ -120,9 +152,12 @@ function App(props) {
 
     setMovies(newMovies);
 
+    // reset form content and errors after creating an entry
     setNewMovieTitle('');
     setNewMovieImageUrl('');
     setNewMovieComment('');
+
+    setShowFormErrors(false);
   };
 
   const deleteMovieHandler = (movieId) => {
@@ -138,8 +173,10 @@ function App(props) {
     const isMovieWatched = getIsMovieWatched(movieId);
 
     const newWatchedMoviesData = Object.assign({}, watchedMoviesData);
-    
-    if(isMovieWatched) {
+
+    // if movie is currenly watched delete its id key in the watched movies data
+    // otherwise add the movie id as key instead
+    if (isMovieWatched) {
       delete newWatchedMoviesData[movieId];
     } else {
       newWatchedMoviesData[movieId] = true;
@@ -147,6 +184,23 @@ function App(props) {
 
     setWatchedMoviesData(newWatchedMoviesData);
   };
+
+  // Cache movie entries in local storage whenever the movies list changes
+  useEffect(() => {
+    localStorage.setItem(
+      MOVIES_CACHE_KEY,
+      JSON.stringify(movies),
+    );
+  }, [movies]);
+
+  // Cache movie watched data entries in local storage whenever 
+  // the movies watched data changes
+  useEffect(() => {
+    localStorage.setItem(
+      WATCHED_MOVIES_CACHE_KEY,
+      JSON.stringify(watchedMoviesData),
+    );
+  }, [watchedMoviesData]);
 
   return (
     <Container>
@@ -164,19 +218,26 @@ function App(props) {
             value={newMovieTitle}
             onChange={(e) => setNewMovieTitle(e.target.value)}
           />
+          {showFormErrors && !newMovieTitle && (
+            <FormErrorMessage>Movie Title is required</FormErrorMessage>
+          )}
+
         </FormItemContainer>
 
         <FormItemContainer>
-          <label>Image Url</label>
+          <label>Image URL</label>
           <input
             type="text"
             value={newMovieImageUrl}
             onChange={(e) => setNewMovieImageUrl(e.target.value)}
           />
+          {showFormErrors && !newMovieImageUrl && (
+            <FormErrorMessage>Movie Image URL is required</FormErrorMessage>
+          )}
         </FormItemContainer>
 
         <FormItemContainer>
-          <label>Comment:</label>
+          <label>Comment (Optional)</label>
           <input
             type="text"
             value={newMovieComment}
