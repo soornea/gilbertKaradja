@@ -3,6 +3,7 @@ import ReactDOM from 'react-dom';
 import './index.css';
 import App from './App';
 
+
 export function getWatchedMovies() {
 	var movies = localStorage.getItem('movies-watched');
 
@@ -39,6 +40,10 @@ export function getAllMovies() {
 	}
 }
 
+/*
+There is no validation logic for adding movies. Should probably have that (at least to validate
+movie title). Also there is no way to remove a movie.
+*/
 export function add(title, description, image) {
 	var movie = {};
 	movie.title = title;
@@ -53,6 +58,10 @@ export function add(title, description, image) {
 	render();
 }
 
+/* 
+Because add watched does not do any sort of comparison check its possible to have
+several entries in watched for just one movie.
+*/
 export function addWatchedMovie(title, description, image) {
 	var movie = {};
 	movie.title = title;
@@ -67,9 +76,18 @@ export function addWatchedMovie(title, description, image) {
 	render();
 }
 
+/*
+Removing movies by using the title means you can't have movies with the same name, as that
+will lead to removing several entries erronously. 
+*/ 
 export function removeWatchedMovie(title) {
 	var movies = getWatchedMovies();
 
+	/* 
+	Would be better to filter out titles and create a new array instead of assigning
+	'null' to entries. This means you will have to perform a null check down the line
+	everywhere you use this array. Not that obvious and not ideal.
+	*/
 	for (var i = 0; i < movies.length; i++) {
 	   if (!movies[i]) continue;
 		if (movies[i].title == title) {
@@ -82,7 +100,14 @@ export function removeWatchedMovie(title) {
 	render();
 }
 
+/* 
+Ideally you would call ReactDOM.render once to mount your application in a container and allow component
+state updates to trigger subsequent re-renders. Currently you have to call the "render" method everywhere
+a "state" update is likely to occur in your application. This is not scalable, especially if you want to
+implement something more elaborate in the future.
+*/
 function render() {
+	// App component does not use any of the props passed
 	ReactDOM.render(<App movies={getAllMovies()} watched={getWatchedMovies()} />, document.getElementById('root'))
 }
 

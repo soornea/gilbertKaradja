@@ -13,6 +13,7 @@ code {
     monospace;
 }
 
+/* style belongs to App component. Should be moved to App.css */
 .watched {
 	margin: 0 auto;
 	width: 30%;
@@ -22,11 +23,19 @@ code {
 	float: left;
 }
 
+/* 
+Make styles more specific, especially when they will make a very obvious 
+outcome in the layout
+ */
 img {
 	border-right: 60px solid black;
 	border-left: 60px solid black;
 }
 
+/* 
+Same as .watched style ablove. Move to App.css. Also a different name 
+would be better, to not confuse with all shorthand in CSS 
+*/
 .all {
 	margin: 0 auto;
 	width: 30%;
