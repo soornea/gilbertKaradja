@@ -4,9 +4,8 @@ import styled from 'styled-components';
 const Container = styled.div`
     display: flex;
     flex-direction: row;
-    padding-left: 15px;
-    padding: 15px 0px;
-    margin-bottom: 15px;
+    padding-bottom: 20px;
+    margin-bottom: 20px;
     border-bottom: 1px solid #f1f1f1;
 `;
 
@@ -77,11 +76,17 @@ const ActionText = styled.a`
     cursor: pointer;
 `;
 
+const ActionTextSeparator = styled.a`
+    margin: 0px 8px;
+`;
+
+
 /**
  * @param {String} title
  * @param {String} imageUrl
  * @param {String} comment
  * @param {boolean} isAlreadyWatched 
+ * @param {Function} deleteHandler  
  */
 function MovieItemProps(title, imageUrl, comment, isAlreadyWatched) {
     this.title = title;
@@ -95,7 +100,7 @@ function MovieItemProps(title, imageUrl, comment, isAlreadyWatched) {
  */
 
 export default function MovieItem(props) {
-    const { title, imageUrl, comment, isAlreadyWatched, } = props;
+    const { title, imageUrl, comment, isAlreadyWatched, deleteHandler } = props;
 
     return (
         <Container>
@@ -118,6 +123,11 @@ export default function MovieItem(props) {
                         {!isAlreadyWatched && 'Watched it!'}
                         {isAlreadyWatched && 'Remove from watched'}
                     </ActionText>
+
+                    <ActionTextSeparator>|</ActionTextSeparator>
+
+                    <ActionText onClick={deleteHandler}>Delete</ActionText>
+
                 </ControlsContainer>
             </ContentContainer>
         </Container>

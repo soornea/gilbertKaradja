@@ -4,6 +4,9 @@ import styled from 'styled-components';
 import MovieItem from './MovieItem';
 import './App.css';
 
+const MOVIES_CACHE_KEY = 'movies-all';
+const WATCHED_MOVIES_CACHE_KEY = 'movies-watched';
+
 const Container = styled.div`
   max-width: 600px;
   padding: 0px 20px; 
@@ -62,102 +65,6 @@ export function getWatchedMovies() {
   }
 }
 
-function getAllMovies() {
-  var movies = localStorage.getItem('movies-all');
-
-  if (!movies) {
-    return [
-      new Movie(
-        2,
-        'http://d21lz9b0v8r1zn.cloudfront.net/wp-content/uploads//2012/03/detail.jpg',
-        'New York blows up in this!'
-      ),
-      new Movie(
-        'Dark City',
-        'https://i.chzbgr.com/full/5569379584/hA96709E0/',
-        'This looks mysterious. Cool!'
-      ),
-      new Movie(
-        'Hot Tub Time Machine',
-        'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTG7vNmphIcVhEcybvSvMgbTkV6EE2twHBNanKvgDx3ZS7Ivn6Dtg',
-        'Someone said this was fun. Maybe!'
-      ),
-    ];
-  } else {
-    return JSON.parse(movies);
-  }
-}
-
-function addWatchedMovie(title, description, image) {
-  var movie = {};
-  movie.title = title;
-  movie.description = description;
-  movie.image = image;
-
-  var movies = getWatchedMovies();
-  movies.push(movie);
-
-  localStorage.setItem('movies-watched', JSON.stringify(movies));
-}
-
-function removeWatchedMovie(title) {
-  var movies = getWatchedMovies();
-
-  for (var i = 0; i < movies.length; i++) {
-    if (!movies[i]) continue;
-    if (movies[i].title == title) {
-      movies[i] = null
-    }
-  }
-
-  localStorage.setItem('movies-watched', JSON.stringify(movies));
-}
-
-const getMoviesComponents = (movies) => {
-  var components = [];
-
-  movies.forEach(function (movie) {
-    const { title, image, comment } = movie;
-
-    components.push(
-      <MovieItem
-        title={title}
-        imageUrl={image}
-        comment={comment}
-        isAlreadyWatched={false}
-      />
-    )
-  })
-
-  return components;
-}
-
-function getWatchedMoviesComponents(movies) {
-  var components = [];
-
-  movies.forEach(function (movie) {
-    components.push(movie && (
-      <div className="watched">
-        <div>
-          <img src={movie.image} height="100px" />
-        </div>
-        <span>
-          <a className="movie-watched" href="#" onClick={function () { removeWatchedMovie(movie.title) }}>
-            {movie.title}
-          </a>
-        </span>
-        <br />
-        <span>
-          {movie.comment}
-        </span>
-        <br />
-        <br />
-      </div>
-    ))
-  })
-
-  return components;
-}
 
 function getCachedMovies() {
   return [
@@ -218,6 +125,11 @@ function App(props) {
     setNewMovieComment('');
   };
 
+  const deleteMovieHandler = (movieId) => {
+    const newMovies = movies.filter(movie => movie.id != movieId);
+    setMovies(newMovies);
+  }
+
 
   return (
     <Container>
@@ -269,9 +181,14 @@ function App(props) {
             title={title}
             imageUrl={imageUrl}
             comment={comment}
+            deleteHandler={() => deleteMovieHandler(id)}
           />
         );
       })}
+
+      {movies.length === 0 && (
+        <p>Nothing here yet. Go ahead and add a movie!</p>
+      )}
     </Container>
   );
 }
