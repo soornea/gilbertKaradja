@@ -115,7 +115,7 @@ export default function MovieItem(props) {
 
                 <ControlsContainer>
                     <ActionText>
-                        {!isAlreadyWatched && 'Watched this one!'}
+                        {!isAlreadyWatched && 'Watched it!'}
                         {isAlreadyWatched && 'Remove from watched'}
                     </ActionText>
                 </ControlsContainer>
