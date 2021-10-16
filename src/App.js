@@ -11,10 +11,17 @@ const Container = styled.div`
   margin: auto;
 `;
 
+const HeaderContainer = styled.div`
+  border-bottom: 2px solid black;
+  margin-bottom: 20px;
+`;
+
+
 const FormContainer = styled.form`
+  max-width: 350px;
   display: flex;
   flex-direction: column;
-
+  margin-bottom: 50px;
 `;
 
 const FormItemContainer = styled.div`
@@ -79,18 +86,6 @@ function getAllMovies() {
   } else {
     return JSON.parse(movies);
   }
-}
-
-function add(title, description, image) {
-  var movie = {};
-  movie.title = title;
-  movie.description = description;
-  movie.image = image;
-
-  var movies = getAllMovies();
-  movies.push(movie);
-
-  localStorage.setItem('movies-all', JSON.stringify(movies));
 }
 
 function addWatchedMovie(title, description, image) {
@@ -191,6 +186,10 @@ function getCachedWatchedMoviesData() {
   return {};
 }
 
+function generateMovieId() {
+  return `${Date.now()}`;
+}
+
 function App(props) {
   const [movies, setMovies] = useState(getCachedMovies());
   const [watchedMoviesData, getWatchedMoviesData] = useState(
@@ -201,12 +200,33 @@ function App(props) {
   const [newMovieImageUrl, setNewMovieImageUrl] = useState('');
   const [newMovieComment, setNewMovieComment] = useState('');
 
+  const addNewMovieHandler = () => {
+    if(!newMovieTitle || !newMovieImageUrl) return;
+
+    const movieId = generateMovieId();
+
+    const newMovie = new Movie(
+      movieId, newMovieTitle, newMovieImageUrl, newMovieComment
+    );
+
+    const newMovies = [newMovie, ...movies];
+
+    setMovies(newMovies);
+
+    setNewMovieTitle('');
+    setNewMovieImageUrl('');
+    setNewMovieComment('');
+  };
+
+
   return (
     <Container>
-      <h1>Codest Movies!</h1>
+      <HeaderContainer>
+        <h1>Codest Movies!</h1>
+      </HeaderContainer>
 
       <FormContainer>
-        <h1>Add movie!</h1>
+        <h2>Add movie!</h2>
 
         <FormItemContainer>
           <label>Movie Title</label>
@@ -235,12 +255,11 @@ function App(props) {
           />
         </FormItemContainer>
 
-        <input type="button" onClick={() => { }} value="ADD MOVIE" />
+        <input type="button" onClick={addNewMovieHandler} value="ADD MOVIE" />
       </FormContainer>
 
+      <h2>My Movies:</h2>
 
-
-      <h1>My Movies:</h1>
       {movies.map(movie => {
         const { id, title, imageUrl, comment } = movie;
 
