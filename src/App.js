@@ -99,7 +99,7 @@ function generateMovieId() {
 
 function App(props) {
   const [movies, setMovies] = useState(getCachedMovies());
-  const [watchedMoviesData, getWatchedMoviesData] = useState(
+  const [watchedMoviesData, setWatchedMoviesData] = useState(
     getCachedWatchedMoviesData()
   );
 
@@ -108,7 +108,7 @@ function App(props) {
   const [newMovieComment, setNewMovieComment] = useState('');
 
   const addNewMovieHandler = () => {
-    if(!newMovieTitle || !newMovieImageUrl) return;
+    if (!newMovieTitle || !newMovieImageUrl) return;
 
     const movieId = generateMovieId();
 
@@ -130,6 +130,23 @@ function App(props) {
     setMovies(newMovies);
   }
 
+  const getIsMovieWatched = (movieId) => {
+    return !!watchedMoviesData[movieId];
+  };
+
+  const toggleMovieWatched = (movieId) => {
+    const isMovieWatched = getIsMovieWatched(movieId);
+
+    const newWatchedMoviesData = Object.assign({}, watchedMoviesData);
+    
+    if(isMovieWatched) {
+      delete newWatchedMoviesData[movieId];
+    } else {
+      newWatchedMoviesData[movieId] = true;
+    }
+
+    setWatchedMoviesData(newWatchedMoviesData);
+  };
 
   return (
     <Container>
@@ -181,7 +198,9 @@ function App(props) {
             title={title}
             imageUrl={imageUrl}
             comment={comment}
+            isAlreadyWatched={getIsMovieWatched(id)}
             deleteHandler={() => deleteMovieHandler(id)}
+            toggleWatchedHandler={() => toggleMovieWatched(id)}
           />
         );
       })}

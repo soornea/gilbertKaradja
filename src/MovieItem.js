@@ -87,12 +87,22 @@ const ActionTextSeparator = styled.a`
  * @param {String} comment
  * @param {boolean} isAlreadyWatched 
  * @param {Function} deleteHandler  
+ * @param {Function} toggleWatchedHandler 
  */
-function MovieItemProps(title, imageUrl, comment, isAlreadyWatched) {
+function MovieItemProps(
+    title,
+    imageUrl,
+    comment,
+    isAlreadyWatched,
+    deleteHandler,
+    toggleWatchedHandler,
+) {
     this.title = title;
     this.imageUrl = imageUrl;
     this.comment = comment;
     this.isAlreadyWatched = isAlreadyWatched;
+    this.deleteHandler = deleteHandler;
+    this.toggleWatchedHandler = toggleWatchedHandler;
 }
 
 /**
@@ -100,7 +110,14 @@ function MovieItemProps(title, imageUrl, comment, isAlreadyWatched) {
  */
 
 export default function MovieItem(props) {
-    const { title, imageUrl, comment, isAlreadyWatched, deleteHandler } = props;
+    const {
+        title,
+        imageUrl,
+        comment,
+        isAlreadyWatched,
+        deleteHandler,
+        toggleWatchedHandler,
+    } = props;
 
     return (
         <Container>
@@ -119,7 +136,7 @@ export default function MovieItem(props) {
                 <Comment>{comment}</Comment>
 
                 <ControlsContainer>
-                    <ActionText>
+                    <ActionText onClick={toggleWatchedHandler}>
                         {!isAlreadyWatched && 'Watched it!'}
                         {isAlreadyWatched && 'Remove from watched'}
                     </ActionText>
